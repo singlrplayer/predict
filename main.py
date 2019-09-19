@@ -35,25 +35,27 @@ for i in f.candles: ###TODO: поразмышлять на предмет опр
     #массив входных обучающих данных
     myIn[i] = []
     myOut[i] = []
-    for j in linesCount[i]:
-        myIn[i][j] = np.empty((br.IOcandles['in'][i],3))
-        myOut[i][j] = np.empty((3, br.IOcandles['out'][i]))
+    syn0 = []
+    syn1 = []
+    for k in linesCount[i]:
+        myIn[i][k] = np.empty((br.IOcandles['in'][i],3))
+        myOut[i][k] = np.empty((3, br.IOcandles['out'][i]))
     # случайно инициализируем веса, в среднем - 0
-    syn0 = 2*np.random.random((linesCount[i], br.IOcandles['in'][i],3)) - 1
-    syn1 = 2*np.random.random((linesCount[i], br.IOcandles['out'][i],3)) - 1
-    for j in range(100000):
+        syn0[k] = 2*np.random.random((linesCount[i], br.IOcandles['in'][i],3)) - 1
+        syn1[k] = 2*np.random.random((linesCount[i], br.IOcandles['out'][i],3)) - 1
+        for j in range(100000):
         	# проходим вперёд по слоям 0, 1 и 2
-        layer0 = myIn[i]
-        layer1 = nonlin(np.dot(layer0,syn0))
-        layer2 = nonlin(np.dot(layer1,syn1))
+            layer0 = myIn[i]
+            layer1 = nonlin(np.dot(layer0,syn0))
+            layer2 = nonlin(np.dot(layer1,syn1))
         
-        layer2_error = myOut[i] - layer2 #ouput error
+            layer2_error = myOut[i] - layer2 #ouput error
 
-        layer2_delta = layer2_error*nonlin(layer2,deriv=True) #turing machine ;)
-        layer1_error = layer2_delta.dot(syn1.T) #turing machine - 2 ;)
-        layer1_delta = layer1_error * nonlin(layer1,deriv=True) #tm-3
-        syn1 += l1.T.dot(l2_delta) #подгонка весов. почти магина тьюринга ;)
-        syn0 += l0.T.dot(l1_delta)
+            layer2_delta = layer2_error*nonlin(layer2,deriv=True) #turing machine ;)
+            layer1_error = layer2_delta.dot(syn1.T) #turing machine - 2 ;)
+            layer1_delta = layer1_error * nonlin(layer1,deriv=True) #tm-3
+            syn1[k] += l1.T.dot(l2_delta) #подгонка весов. почти магина тьюринга ;)
+            syn0[k] += l0.T.dot(l1_delta)
   
 ########################
 ## exp end ;)
