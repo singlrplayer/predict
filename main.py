@@ -1,4 +1,5 @@
 import numpy as np
+from myFile import myFile
 
 def nonlin(x,deriv=False):
     if(deriv==True):
@@ -18,6 +19,10 @@ y = np.array([[0], #выход
 			[0]])
 
 np.random.seed(1)
+
+## exp start
+f = myFile()
+## exp end ;)
 
 # случайно инициализируем веса, в среднем - 0
 syn0 = 2*np.random.random((3,4)) - 1
