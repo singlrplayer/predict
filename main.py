@@ -1,5 +1,7 @@
 import numpy as np
 from myFile import myFile
+from blurRules import blurRules
+
 
 def nonlin(x,deriv=False):
     if(deriv==True):
@@ -21,7 +23,19 @@ y = np.array([[0], #выход
 np.random.seed(1)
 
 ## exp start
-f = myFile()
+#########################
+linesCount = {}
+myIn = {}
+myOut = {}
+br = blurRules()
+f = myFile(br)
+for i in f.candles: #количество обучающий строк. надо будет писать количество строк в отдельный конфиг
+    linesCount[i] = 100
+for i in f.candles:
+    #массив входных обучающих данных
+    myIn[i] = np.empty((linesCount[i], br.IOcandles['in'][i],3))
+    myOut[i] = np.empty((linesCount[i], br.IOcandles['out'][i],3))
+########################
 ## exp end ;)
 
 # случайно инициализируем веса, в среднем - 0

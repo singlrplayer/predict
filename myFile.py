@@ -12,25 +12,19 @@ class myFile:
     candles = ['minFile','min5File','min15File','min30File','hourFile','hour4File','dayFile','weekFile','monthFile'] #названия свечек. добавляется к названию файла
 
            
-    def __init__(self, currency = 'AUDJPY'):
-        self.source['candlepath'] = currency
-        self.getSourceLearnCandles(self.source['candlepath'])
-        """self.source['candlepath'] = self.source['pretext'] = currency
+    def __init__(self, br, cfg = 'config.txt', currency = 'AUDJPY'):
+        self.source['candlepath'] = self.source['pretext'] = currency
         try:
             f = open(cfg,'r')
             z = f.readline()
             z = z[0:len(z)-1] #некрасивое удаление знака конца строки. переделать
             self.source['candlepath'] = self.source['pretext'] = str(z)
-            self.getSourceCandles(self.source['candlepath'])
-            self.dircreate(self.source['candlepath'] + 'learning', 'candlepath')
-            self.makeLearnFiles(self.source['candlepath'])
-            self.Learniles['min5File'].write("test")
             itertools.islice(f,1)
             for line in f:
                 br.getCandleRuleFromString(line)
         except Exception:
             print ("ошибка конфига. убедитесь, что файл %s существует (и желательно не пуст).", cfg)
-            self.myShutdowm()"""
+            self.myShutdowm()
 
     def getSourceLearnCandles(self, currency = 'AUDJPY'): #opens the learn files 
         path = os.getcwd()
