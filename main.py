@@ -33,8 +33,11 @@ for i in f.candles: #количество обучающий строк. над�
     linesCount[i] = 100
 for i in f.candles: ###TODO: поразмышлять на предмет определить входящие и исходящие матрицы аки набор двумерных, дабы не влезать в дебри умножения трехмерных массивов
     #массив входных обучающих данных
-    myIn[i] = np.empty((linesCount[i], br.IOcandles['in'][i],3))
-    myOut[i] = np.empty((linesCount[i], br.IOcandles['out'][i],3))
+    myIn[i] = []
+    myOut[i] = []
+    for j in linesCount[i]:
+        myIn[i][j] = np.empty((br.IOcandles['in'][i],3))
+        myOut[i][j] = np.empty((3, br.IOcandles['out'][i]))
     # случайно инициализируем веса, в среднем - 0
     syn0 = 2*np.random.random((linesCount[i], br.IOcandles['in'][i],3)) - 1
     syn1 = 2*np.random.random((linesCount[i], br.IOcandles['out'][i],3)) - 1
