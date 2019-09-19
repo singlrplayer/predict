@@ -36,7 +36,7 @@ class myFile:
         path = os.getcwd()
         os.chdir(currency + 'learning')
         for i in self.candles:
-            self.LearnfilePath[i] = self.source['pretext'] + "_learn_" + i + ".txt" #здесь и везде: название файла строится по принцпу "валюта + "_learn_" + тип свечки + ".txt"
+            self.LearnfilePath[i] = self.source['pretext'] + currency + "_learn_" + i + ".txt" #здесь и везде: название файла строится по принцпу "валюта + "_learn_" + тип свечки + ".txt"
             try:
                 self.Learniles[i] = open(self.LearnfilePath[i], 'a')
             except Exception:
