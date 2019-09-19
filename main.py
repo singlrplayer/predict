@@ -31,7 +31,7 @@ br = blurRules()
 f = myFile(br)
 for i in f.candles: #количество обучающий строк. надо будет писать количество строк в отдельный конфиг
     linesCount[i] = 100
-for i in f.candles:
+for i in f.candles: ###TODO: поразмышлять на предмет определить входящие и исходящие матрицы аки набор двумерных, дабы не влезать в дебри умножения трехмерных массивов
     #массив входных обучающих данных
     myIn[i] = np.empty((linesCount[i], br.IOcandles['in'][i],3))
     myOut[i] = np.empty((linesCount[i], br.IOcandles['out'][i],3))
@@ -51,10 +51,7 @@ for i in f.candles:
         layer1_delta = layer1_error * nonlin(layer1,deriv=True) #tm-3
         syn1 += l1.T.dot(l2_delta) #подгонка весов. почти магина тьюринга ;)
         syn0 += l0.T.dot(l1_delta)
-
-
-    
-
+  
 ########################
 ## exp end ;)
 
