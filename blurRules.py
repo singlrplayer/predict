@@ -6,8 +6,8 @@ class blurRules:
     bodyRules = {} #bodyRules[candleVal[i]] = {} -> we'd have few bodyRules for every candle type. ihope
     shadowRules = {}#the same as body rules
     IOcandles = {'in':{},'out':{}} #input & ouput ANN candles. num
-    learnArrayIn = [] #среднекрасивое решение для входов обучающей матрицы
-    learnArrayOut = [] #среднекрасивое решение для выходов обучающей матрицы
+    learnArrayIn = [] #среднекрасивое решение для входов обучающей матрицы  : upShadow, body, DownShadow
+    learnArrayOut = [] #среднекрасивое решение для выходов обучающей матрицы : upShadow, body, DownShadow
 
     def getCandleRuleFromString(self, s):
         try:
@@ -79,34 +79,50 @@ class blurRules:
         itertools.islice(dataFile,startPos) #on position
         c = 0
         for line in dataFile:
-            c += 1 #counter
             s = line
-            #print(line) ## <----- del it ;)
+            self.learnArrayIn.append([])
             try:
                 j = s.index('[',0,len(s)) #at first in row
                 s = s[j + 1: len(s)]
                 j = s.index(']',0,len(s))
                 s_in = s[0:j]
-                self.getvalsFromLine(s_in)
+                self.getvalsFromLine(s_in, self.learnArrayIn[c])
                 j = s.index('[',0,len(s)) #at secont out row
                 s = s[j + 1: len(s)]
                 s_out = s[0:-1]
-                self.getvalsFromLine(s_out)
-                #print(s_in)
-                #print(s_out)
+                #self.getvalsFromLine(s_out)
             except Exception:
                 print("wrong string format " + s)
-            if (c == count): return
+            c += 1 #counter
+            #if (c == count): return
+        print("input array")
+        print(self.learnArrayIn)
 
-    def getvalsFromLine(self, s):
+    def getvalsFromLine(self, s, array):
         tmp = s.split(',')
         tmpCandle = '' #candle string temporary (shadow,body,shadow)
-        i = 0
         for i in range(len(tmp)):
             tmpCandle = tmp[i][1:-1]
-            print(tmpCandle)
+            try: #we have to clean row of '
+                j = tmpCandle.index('\'',0,len(tmpCandle))
+                tmpCandle = tmpCandle[j + 1: len(tmpCandle)]
+            except Exception:
+                print("ups")
+            try: #now we have to split candle values fom string to number
+                #print(tmpCandle)
+                j = tmpCandle.index(':',0,len(tmpCandle))
+                t = Decimal(tmpCandle[0:j]) #upshadow
+                print(t)
+                array.append(t)
+                #tmp = tmpCandle.split(':')
+                """for k in range(len(tmp)):
+                    try:
+                        j = tmp[k].index('\'',0,len(tmp[k]))
+                        tmp[k] = tmp[k][0:j] #if we have the ' -- we have it at the end. only. ever. TODO: make it more understandly ;)
+                    except Exception:
+                        print ("clean")"""
+                    
+                    
+            except Exception:
+                print ("exc")
             #print (i)
- 
-
-            
-

@@ -33,6 +33,7 @@ for i in f.candles:
     
 for i in f.candles:
     br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i], linesCount[i])
+    #print(br.learnArrayIn)
     print (f.Learniles[i])
     #line = f.Learniles[i].readline()
     syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,linesCount[i])) - 1 #in
