@@ -21,20 +21,29 @@ class myFile:
             self.source['candlepath'] = self.source['pretext'] = str(z)
             itertools.islice(f,1)
             for line in f:
-                br.getCandleRuleFromString(line)
+                br.getCandleRuleFromString(line) #берет словарь размытия значений свеч (одна линия -- один тип свеч)
+            #self.getSourceCandles(currency)
         except Exception:
             print ("ошибка конфига. убедитесь, что файл %s существует (и желательно не пуст).", cfg)
             self.myShutdowm()
 
-    def getSourceLearnCandles(self, currency = 'AUDJPY'): #opens the learn files 
+    def getMeSourceCandles(self, currency = 'AUDJPY'): #opens the learn files 
         path = os.getcwd()
         os.chdir(currency + 'learning')
+        print(self.Learniles)
+        print("---go----")
         for i in self.candles:
-            self.LearnfilePath[i] = self.source['pretext'] + currency + "_learn_" + i + ".txt" #здесь и везде: название файла строится по принцпу "валюта + "_learn_" + тип свечки + ".txt"
+            self.LearnfilePath[i] = currency + "_learn_" + i + ".txt" #здесь и везде: название файла строится по принцпу "валюта + "_learn_" + тип свечки + ".txt"
+            print(i)
             try:
                 self.Learniles[i] = open(self.LearnfilePath[i], 'a')
+                ####
+                line = self.Learniles[i].readline()
+                #print(line)
+                ####
             except Exception:
                 print ("ошибка открытия файл " + self.LearnfilePath[i])
+                print (self.Learniles[i])
                 self.myShutdowm()
         os.chdir(path)
         
@@ -44,6 +53,7 @@ class myFile:
             self.LearnfilePath[i] = self.fileCreate(self.source['pretext'] + "_learn_" + i + ".txt")
             try:
                 self.Learniles[i] = open(self.LearnfilePath[i], 'a')
+
             except Exception:
                 print ("ошибка открытия файл " + self.LearnfilePath[i])
                 self.myShutdowm()
@@ -67,9 +77,6 @@ class myFile:
             if(i in self.Qfiles): self.Qfiles[i].close()
             if(i in self.Learniles): self.Learniles[i].close()
             if(i in self.StatFiles): self.StatFiles[i].close()
-            #self.QfilePath[i] = ''
-            #self.LogfilePath[i] = ''
-        #   self.source['f'].close()
         self.source['pretext'] = ''
 
     def dircreate(self, s,ind):

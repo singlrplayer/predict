@@ -15,20 +15,39 @@ X = np.array([[0,0,1], #вход
             [1,0,1],
             [1,1,1]])
                 
-y = np.array([[0], #выход
-			[1],
-			[1],
-			[0]])
+y = np.array([[0,0], #выход
+			[1,1],
+			[1,1],
+			[0,1]])
 
 np.random.seed(1)
 
 ## exp start
 #########################
-linesCount = {}
+linesCount = {} #количество обучающих строк на каждый тип свечи. надо будет писать количество строк в отдельный конфиг
+br = blurRules()
+f = myFile(br)
+#f.getSourceLearnCandles()
+f.getMeSourceCandles()
+print(br.IOcandles)
+#print(f.Learniles)
+for i in f.candles: 
+    linesCount[i] = 1000
+    
+for i in f.candles:
+   #br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i])
+    print (f.Learniles[i])
+    #line = f.Learniles[i].readline()
+    syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,linesCount[i])) - 1 #in
+    syn1 = 2*np.random.random((linesCount[i],br.IOcandles['out'][i] * 3)) - 1 #out   
+
+
+"""linesCount = {}
 myIn = []
 myOut = []
 br = blurRules()
 f = myFile(br)
+print(br.IOcandles)
 for i in f.candles: #количество обучающий строк. надо будет писать количество строк в отдельный конфиг
     linesCount[i] = 100
 for i in f.candles: ###TODO: поразмышлять на предмет определить входящие и исходящие матрицы аки набор двумерных, дабы не влезать в дебри умножения трехмерных массивов
@@ -58,13 +77,13 @@ for i in f.candles: ###TODO: поразмышлять на предмет опр
             layer1_delta = layer1_error * nonlin(layer1,deriv=True) #tm-3
             syn1[k] += l1.T.dot(l2_delta) #подгонка весов. почти магина тьюринга ;)
             syn0[k] += l0.T.dot(l1_delta)
-  
+"""  
 ########################
 ## exp end ;)
 
 # случайно инициализируем веса, в среднем - 0
 syn0 = 2*np.random.random((3,4)) - 1
-syn1 = 2*np.random.random((4,1)) - 1
+syn1 = 2*np.random.random((4,2)) - 1
 
 for j in range(60000):
 

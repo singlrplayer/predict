@@ -1,4 +1,4 @@
-
+import itertools
 from decimal import *
 
 class blurRules:
@@ -6,6 +6,8 @@ class blurRules:
     bodyRules = {} #bodyRules[candleVal[i]] = {} -> we'd have few bodyRules for every candle type. ihope
     shadowRules = {}#the same as body rules
     IOcandles = {'in':{},'out':{}} #input & ouput ANN candles. num
+    learnArrayIn = [] #среднекрасивое решение для входов обучающей матрицы
+    learnArrayOut = [] #среднекрасивое решение для выходов обучающей матрицы
 
     def getCandleRuleFromString(self, s):
         try:
@@ -72,6 +74,18 @@ class blurRules:
             except Exception:
                 print("ошибка синтатксиса праввил свечей")
             i = i + 1
+
+    def createLearnArray(self, sizeIn, sizeOut, dataFile, startPos = 0):
+        itertools.islice(dataFile,startPos) #on position
+        print(dataFile)
+        line = dataFile.readline()
+        print(line)
+        #for line in dataFile:
+            #print(line)
+        """for line in dataFile: #по каждой строке в сгенерированном файле обучения
+            print (line)"""
+
+        #for i in range(sizeIn): 
 
             
 
