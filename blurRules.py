@@ -107,13 +107,13 @@ class blurRules:
                 j = tmpCandle.index('\'',0,len(tmpCandle))
                 tmpCandle = tmpCandle[j + 1: len(tmpCandle)]
             except Exception:
-                print("ups")
+                tmpCandle = tmp[i][1:-1]
             try: #now we have to split candle values fom string to number
                 #print(tmpCandle)
                 j = tmpCandle.index(':',0,len(tmpCandle))
                 t = Decimal(tmpCandle[0:j]) #upshadow
-                print(t)
-                array.append(t)
+                #print(t)
+                #array.append(t)
                 #tmp = tmpCandle.split(':')
                 """for k in range(len(tmp)):
                     try:

@@ -1,9 +1,9 @@
-import numpy as np
+#import numpy as np
 from myFile import myFile
 from blurRules import blurRules
 
 
-def nonlin(x,deriv=False):
+"""def nonlin(x,deriv=False):
     if(deriv==True):
           # return f(x)*(1-f(x))
         return x*(1-x)
@@ -20,7 +20,7 @@ y = np.array([[0,0], #выход
 			[1,1],
 			[0,1]])
 
-np.random.seed(1)
+np.random.seed(1)"""
 
 ## exp start
 #########################
@@ -36,8 +36,8 @@ for i in f.candles:
     #print(br.learnArrayIn)
     print (f.Learniles[i])
     #line = f.Learniles[i].readline()
-    syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,linesCount[i])) - 1 #in
-    syn1 = 2*np.random.random((linesCount[i],br.IOcandles['out'][i] * 3)) - 1 #out   
+    #syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,linesCount[i])) - 1 #in
+    #syn1 = 2*np.random.random((linesCount[i],br.IOcandles['out'][i] * 3)) - 1 #out   
 
 
 """linesCount = {}
@@ -79,7 +79,7 @@ for i in f.candles: ###TODO: поразмышлять на предмет опр
 ########################
 ## exp end ;)
 
-# случайно инициализируем веса, в среднем - 0
+"""# случайно инициализируем веса, в среднем - 0
 syn0 = 2*np.random.random((3,4)) - 1
 syn1 = 2*np.random.random((4,2)) - 1
 
@@ -108,4 +108,5 @@ for j in range(60000):
     l1_delta = l1_error * nonlin(l1,deriv=True)
 
     syn1 += l1.T.dot(l2_delta)
-    syn0 += l0.T.dot(l1_delta)
+    syn0 += l0.T.dot(l1_delta)"""
+print ("finish ;)")
