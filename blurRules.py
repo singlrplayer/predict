@@ -78,27 +78,41 @@ class blurRules:
     def createLearnArray(self, sizeIn, sizeOut, dataFile, startPos = 0, count = 100):
         itertools.islice(dataFile,startPos) #on position
         c = 0
+        UpShadowArr = []
+        BodyArr = []
+        DownShadowArr = []
+        for i in range(len(self.learnArrayOut)):
+            self.learnArrayOut.pop()
         for line in dataFile:
             s = line
-            self.learnArrayIn.append([])
+            #self.learnArrayIn.append([])
             try:
                 j = s.index('[',0,len(s)) #at first in row
                 s = s[j + 1: len(s)]
                 j = s.index(']',0,len(s))
                 s_in = s[0:j]
-                self.getvalsFromLine(s_in, self.learnArrayIn[c])
+                self.getvalsFromLine(s_in, UpShadowArr, BodyArr, DownShadowArr)
+                self.learnArrayIn.append(UpShadowArr)
+                self.learnArrayIn.append(BodyArr)
+                self.learnArrayIn.append(DownShadowArr)
                 j = s.index('[',0,len(s)) #at secont out row
                 s = s[j + 1: len(s)]
                 s_out = s[0:-1]
-                #self.getvalsFromLine(s_out)
+                self.getvalsFromLine(s_out, UpShadowArr, BodyArr, DownShadowArr)
+                self.learnArrayOut.append(UpShadowArr)
+                self.learnArrayOut.append(BodyArr)
+                self.learnArrayOut.append(DownShadowArr)
             except Exception:
                 print("wrong string format " + s)
             c += 1 #counter
             #if (c == count): return
-        print("input array")
-        print(self.learnArrayIn)
+        print(c)
+        print("output array")
+        #print(self.learnArrayOut)
+        print(len(self.learnArrayOut))
+        
 
-    def getvalsFromLine(self, s, array):
+    def getvalsFromLine(self, s, up, body, down):
         tmp = s.split(',')
         tmpCandle = '' #candle string temporary (shadow,body,shadow)
         for i in range(len(tmp)):
@@ -106,14 +120,32 @@ class blurRules:
             try: #we have to clean row of '
                 j = tmpCandle.index('\'',0,len(tmpCandle))
                 tmpCandle = tmpCandle[j + 1: len(tmpCandle)]
+                try: #кривая на обе ноги обработка апострофа в конце строки. надо будет обязательно сделать по-людски
+                    j = tmpCandle.index('\'',0,len(tmpCandle))
+                    tmpCandle = tmpCandle[0: j]
+                except Exception:
+                    #print("hehehe")
+                    self.appendVals(tmpCandle, up, body, down)
             except Exception:
                 tmpCandle = tmp[i][1:-1]
+                self.appendVals(tmpCandle, up, body, down)
+            #print (i)
+
+    def appendVals(self, tmpCandle, up, body, down):
             try: #now we have to split candle values fom string to number
                 #print(tmpCandle)
-                j = tmpCandle.index(':',0,len(tmpCandle))
+                j = tmpCandle.index(':',0,len(tmpCandle)) #TODO: проверить работоспособность и переписать все нахер по-нормальному. избавиться от говнокода
                 t = Decimal(tmpCandle[0:j]) #upshadow
-                #print(t)
-                #array.append(t)
+                up.append(t)
+                tmpCandle = tmpCandle[j + 1:len(tmpCandle)]
+                j = tmpCandle.index(':',0,len(tmpCandle)) #TODO: проверить работоспособность и переписать все нахер по-нормальному. избавиться от говнокода
+                t = Decimal(tmpCandle[0:j]) #body
+                body.append(t)
+                tmpCandle = tmpCandle[j + 1:len(tmpCandle)]
+                #print (tmpCandle)
+                #j = tmpCandle.index(':',0,len(tmpCandle)) #TODO: проверить работоспособность и переписать все нахер по-нормальному. избавиться от говнокода
+                t = Decimal(tmpCandle[0:j]) #downshadow
+                down.append(t)
                 #tmp = tmpCandle.split(':')
                 """for k in range(len(tmp)):
                     try:
@@ -125,4 +157,4 @@ class blurRules:
                     
             except Exception:
                 print ("exc")
-            #print (i)
+        

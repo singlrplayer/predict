@@ -32,6 +32,8 @@ for i in f.candles:
     linesCount[i] = 1000
     
 for i in f.candles:
+    for j in range(len(br.learnArrayIn)):
+        br.learnArrayIn.pop()
     br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i], linesCount[i])
     #print(br.learnArrayIn)
     print (f.Learniles[i])
