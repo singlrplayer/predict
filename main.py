@@ -25,34 +25,36 @@ np.random.seed(1)
 ## exp start
 #########################
 linesCount = {}
-myIn = {}
-myOut = {}
+myIn = []
+myOut = []
 br = blurRules()
 f = myFile(br)
 for i in f.candles: #количество обучающий строк. надо будет писать количество строк в отдельный конфиг
     linesCount[i] = 100
 for i in f.candles: ###TODO: поразмышлять на предмет определить входящие и исходящие матрицы аки набор двумерных, дабы не влезать в дебри умножения трехмерных массивов
     #массив входных обучающих данных
-    myIn[i] = []
-    myOut[i] = []
-    syn0 = []
-    syn1 = []
-    for k in linesCount[i]:
-        myIn[i][k] = np.empty((br.IOcandles['in'][i],3))
-        myOut[i][k] = np.empty((3, br.IOcandles['out'][i]))
+    #myIn[i] = []
+    #myOut[i] = []
+    syn0 = {}
+    syn1 = {}
+    for k in range(linesCount[i]):
+        #myIn[i][k] = np.empty((br.IOcandles['in'][i],3))
+        #myOut[i][k] = np.empty((3, br.IOcandles['out'][i]))
+        myIn.append(np.empty((linesCount[i], br.IOcandles['in'][i],3)))
+        myOut.append(np.empty((3, br.IOcandles['out'][i], linesCount[i])))
     # случайно инициализируем веса, в среднем - 0
         syn0[k] = 2*np.random.random((linesCount[i], br.IOcandles['in'][i],3)) - 1
         syn1[k] = 2*np.random.random((linesCount[i], br.IOcandles['out'][i],3)) - 1
         for j in range(100000):
         	# проходим вперёд по слоям 0, 1 и 2
-            layer0 = myIn[i]
-            layer1 = nonlin(np.dot(layer0,syn0))
-            layer2 = nonlin(np.dot(layer1,syn1))
+            layer0 = myIn
+            layer1 = nonlin(np.dot(layer0,syn0[k]))
+            layer2 = nonlin(np.dot(layer1,syn1[k]))
         
-            layer2_error = myOut[i] - layer2 #ouput error
+            layer2_error = myOut - layer2 #ouput error
 
             layer2_delta = layer2_error*nonlin(layer2,deriv=True) #turing machine ;)
-            layer1_error = layer2_delta.dot(syn1.T) #turing machine - 2 ;)
+            layer1_error = layer2_delta.dot(syn1[k].T) #turing machine - 2 ;)
             layer1_delta = layer1_error * nonlin(layer1,deriv=True) #tm-3
             syn1[k] += l1.T.dot(l2_delta) #подгонка весов. почти магина тьюринга ;)
             syn0[k] += l0.T.dot(l1_delta)
