@@ -106,10 +106,10 @@ class blurRules:
                 print("wrong string format " + s)
             c += 1 #counter
             #if (c == count): return
-        print(c)
-        print("output array")
+        #print(c)
+        #print("output array")
         #print(self.learnArrayOut)
-        print(len(self.learnArrayOut))
+        #print(len(self.learnArrayOut))
         
 
     def getvalsFromLine(self, s, up, body, down):
@@ -117,23 +117,20 @@ class blurRules:
         tmpCandle = '' #candle string temporary (shadow,body,shadow)
         for i in range(len(tmp)):
             tmpCandle = tmp[i][1:-1]
-            try: #we have to clean row of '
+            try: #we have to clean row of ' IDEA:некорорые стринги имеют апострофы только спереди, некоторые -- с обеих сторон. да, этоможно сделать изящнее. и да, я это сделаю изящнее. потом.
                 j = tmpCandle.index('\'',0,len(tmpCandle))
                 tmpCandle = tmpCandle[j + 1: len(tmpCandle)]
                 try: #кривая на обе ноги обработка апострофа в конце строки. надо будет обязательно сделать по-людски
                     j = tmpCandle.index('\'',0,len(tmpCandle))
                     tmpCandle = tmpCandle[0: j]
-                except Exception:
-                    #print("hehehe")
+                    self.appendVals(tmpCandle, up, body, down) #все апострофы убрали -- обрабатываем
+                except Exception: # если сзади апостофа не нашлось -- обрабатываем 
                     self.appendVals(tmpCandle, up, body, down)
-            except Exception:
-                tmpCandle = tmp[i][1:-1]
+            except Exception: # если спереди апостофа не нашлось -- обрабатываем
                 self.appendVals(tmpCandle, up, body, down)
-            #print (i)
 
     def appendVals(self, tmpCandle, up, body, down):
             try: #now we have to split candle values fom string to number
-                #print(tmpCandle)
                 j = tmpCandle.index(':',0,len(tmpCandle)) #TODO: проверить работоспособность и переписать все нахер по-нормальному. избавиться от говнокода
                 t = Decimal(tmpCandle[0:j]) #upshadow
                 up.append(t)
@@ -142,19 +139,8 @@ class blurRules:
                 t = Decimal(tmpCandle[0:j]) #body
                 body.append(t)
                 tmpCandle = tmpCandle[j + 1:len(tmpCandle)]
-                #print (tmpCandle)
-                #j = tmpCandle.index(':',0,len(tmpCandle)) #TODO: проверить работоспособность и переписать все нахер по-нормальному. избавиться от говнокода
                 t = Decimal(tmpCandle[0:j]) #downshadow
                 down.append(t)
-                #tmp = tmpCandle.split(':')
-                """for k in range(len(tmp)):
-                    try:
-                        j = tmp[k].index('\'',0,len(tmp[k]))
-                        tmp[k] = tmp[k][0:j] #if we have the ' -- we have it at the end. only. ever. TODO: make it more understandly ;)
-                    except Exception:
-                        print ("clean")"""
-                    
-                    
             except Exception:
                 print ("exc")
         
