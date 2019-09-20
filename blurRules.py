@@ -75,17 +75,38 @@ class blurRules:
                 print("ошибка синтатксиса праввил свечей")
             i = i + 1
 
-    def createLearnArray(self, sizeIn, sizeOut, dataFile, startPos = 0):
+    def createLearnArray(self, sizeIn, sizeOut, dataFile, startPos = 0, count = 100):
         itertools.islice(dataFile,startPos) #on position
-        print(dataFile)
-        line = dataFile.readline()
-        print(line)
-        #for line in dataFile:
-            #print(line)
-        """for line in dataFile: #по каждой строке в сгенерированном файле обучения
-            print (line)"""
+        c = 0
+        for line in dataFile:
+            c += 1 #counter
+            s = line
+            #print(line) ## <----- del it ;)
+            try:
+                j = s.index('[',0,len(s)) #at first in row
+                s = s[j + 1: len(s)]
+                j = s.index(']',0,len(s))
+                s_in = s[0:j]
+                self.getvalsFromLine(s_in)
+                j = s.index('[',0,len(s)) #at secont out row
+                s = s[j + 1: len(s)]
+                s_out = s[0:-1]
+                self.getvalsFromLine(s_out)
+                #print(s_in)
+                #print(s_out)
+            except Exception:
+                print("wrong string format " + s)
+            if (c == count): return
 
-        #for i in range(sizeIn): 
+    def getvalsFromLine(self, s):
+        tmp = s.split(',')
+        tmpCandle = '' #candle string temporary (shadow,body,shadow)
+        i = 0
+        for i in range(len(tmp)):
+            tmpCandle = tmp[i][1:-1]
+            print(tmpCandle)
+            #print (i)
+ 
 
             
 

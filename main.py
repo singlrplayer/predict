@@ -27,15 +27,12 @@ np.random.seed(1)
 linesCount = {} #количество обучающих строк на каждый тип свечи. надо будет писать количество строк в отдельный конфиг
 br = blurRules()
 f = myFile(br)
-#f.getSourceLearnCandles()
 f.getMeSourceCandles()
-print(br.IOcandles)
-#print(f.Learniles)
 for i in f.candles: 
     linesCount[i] = 1000
     
 for i in f.candles:
-   #br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i])
+    br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i], linesCount[i])
     print (f.Learniles[i])
     #line = f.Learniles[i].readline()
     syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,linesCount[i])) - 1 #in

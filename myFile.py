@@ -30,46 +30,16 @@ class myFile:
     def getMeSourceCandles(self, currency = 'AUDJPY'): #opens the learn files 
         path = os.getcwd()
         os.chdir(currency + 'learning')
-        print(self.Learniles)
-        print("---go----")
         for i in self.candles:
             self.LearnfilePath[i] = currency + "_learn_" + i + ".txt" #здесь и везде: название файла строится по принцпу "валюта + "_learn_" + тип свечки + ".txt"
             print(i)
             try:
-                self.Learniles[i] = open(self.LearnfilePath[i], 'a')
-                ####
-                line = self.Learniles[i].readline()
-                #print(line)
-                ####
-            except Exception:
-                print ("ошибка открытия файл " + self.LearnfilePath[i])
-                print (self.Learniles[i])
-                self.myShutdowm()
-        os.chdir(path)
-        
-
-    def makeLearnFiles(self,currency):
-        for i in self.candles:
-            self.LearnfilePath[i] = self.fileCreate(self.source['pretext'] + "_learn_" + i + ".txt")
-            try:
-                self.Learniles[i] = open(self.LearnfilePath[i], 'a')
-
+                self.Learniles[i] = open(self.LearnfilePath[i], 'r')
             except Exception:
                 print ("ошибка открытия файл " + self.LearnfilePath[i])
                 self.myShutdowm()
-        
-
-    def getSourceCandles(self, currency):
-        path = os.getcwd()
-        os.chdir(currency)
-        for i in self.candles:
-            self.QfilePath[i] = currency + "_" + i + ".txt"
-            try:
-                self.Qfiles[i] = open(self.QfilePath[i], 'r')
-            except Exception:
-                print("ошибка отрывания файла " + self.QfilePath[i])
-                os.chdir(path)
         os.chdir(path)
+        
 
 
     def myShutdowm(self):
