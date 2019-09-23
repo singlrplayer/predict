@@ -85,16 +85,21 @@ class blurRules:
             self.learnArrayOut.pop()
         for line in dataFile:
             s = line
-            #self.learnArrayIn.append([])
+            self.learnArrayIn.append([])
             try:
                 j = s.index('[',0,len(s)) #at first in row
                 s = s[j + 1: len(s)]
                 j = s.index(']',0,len(s))
                 s_in = s[0:j]
                 self.getvalsFromLine(s_in, UpShadowArr, BodyArr, DownShadowArr)
-                self.learnArrayIn.append(UpShadowArr)
-                self.learnArrayIn.append(BodyArr)
-                self.learnArrayIn.append(DownShadowArr)
+                for k in range(sizeIn):
+                    self.learnArrayIn[c].append(UpShadowArr[k])
+                    self.learnArrayIn[c].append(BodyArr[k])
+                    self.learnArrayIn[c].append(DownShadowArr[k])
+                #self.learnArrayIn.append(UpShadowArr)
+                #self.learnArrayIn.append(BodyArr)
+                #self.learnArrayIn.append(DownShadowArr)
+                print (self.learnArrayIn[c])
                 j = s.index('[',0,len(s)) #at secont out row
                 s = s[j + 1: len(s)]
                 s_out = s[0:-1]
@@ -106,10 +111,7 @@ class blurRules:
                 print("wrong string format " + s)
             c += 1 #counter
             #if (c == count): return
-        #print(c)
-        #print("output array")
-        #print(self.learnArrayOut)
-        #print(len(self.learnArrayOut))
+        print("lines " + str(c))
         
 
     def getvalsFromLine(self, s, up, body, down):
