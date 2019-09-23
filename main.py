@@ -36,18 +36,31 @@ for i in f.candles:
         br.learnArrayIn.pop()# input ANN array cleaning
         br.learnArrayOut.pop()# output ANN array cleaning
     br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i], linesCount[i])
-    print("input arr" + str(len(br.learnArrayIn)))
-    print("output arr" + str(len(br.learnArrayOut)))
-    print (f.Learniles[i])
-    print (br.IOcandles['in'][i])
+    print (br.IOcandles['out'][i])
+    #print("input arr" + str(len(br.learnArrayIn)))
+    #print("output arr" + str(len(br.learnArrayOut)))
+    #print (f.Learniles[i])
+    #print (br.IOcandles['in'][i])
     #line = f.Learniles[i].readline()
     syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,len(br.learnArrayIn))) - 1 #in
-    syn1 = 2*np.random.random((len(br.learnArrayOut),br.IOcandles['out'][i] * 3)) - 1 #out   
+    syn1 = 2*np.random.random((len(br.learnArrayIn),br.IOcandles['out'][i] * 3)) - 1 #out   
     #syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,linesCount[i])) - 1 #in
-    #syn1 = 2*np.random.random((linesCount[i],br.IOcandles['out'][i] * 3)) - 1 #out   
-    layer0 = br.learnArrayIn
-    #layer1 = nonlin(np.dot(layer0,syn0))
-    #layer2 = nonlin(np.dot(layer1,syn1))
+    #syn1 = 2*np.random.random((linesCount[i],br.IOcandles['out'][i] * 3)) - 1 #out
+    for learncycle in range(50):
+        if (len(br.learnArrayIn)>0):
+            layer0 = np.array(br.learnArrayIn)
+            layer1 = nonlin(np.dot(layer0,syn0))
+            layer2 = nonlin(np.dot(layer1,syn1))
+            layer2_error = np.array(br.learnArrayOut) - layer2 #common output ERR
+            #if (learncycle% 10000) == 0:
+            print ("ANN predict forex error:" + str(np.mean(np.abs(layer2_error))))
+            layer2_delta = layer2_error*nonlin(layer2,deriv=True)
+            layer1_error = layer2_delta.dot(syn1.T)
+            layer1_delta = layer1_error * nonlin(layer1,deriv=True)
+            syn1 += layer1.T.dot(layer2_delta)
+            syn0 += layer0.T.dot(layer1_delta)
+
+            
 
 """linesCount = {}
 myIn = []

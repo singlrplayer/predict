@@ -81,11 +81,10 @@ class blurRules:
         UpShadowArr = []
         BodyArr = []
         DownShadowArr = []
-        for i in range(len(self.learnArrayOut)):
-            self.learnArrayOut.pop()
         for line in dataFile:
             s = line
             self.learnArrayIn.append([])
+            self.learnArrayOut.append([])
             try:
                 j = s.index('[',0,len(s)) #at first in row
                 s = s[j + 1: len(s)]
@@ -96,19 +95,17 @@ class blurRules:
                     self.learnArrayIn[c].append(UpShadowArr[k])
                     self.learnArrayIn[c].append(BodyArr[k])
                     self.learnArrayIn[c].append(DownShadowArr[k])
-                #self.learnArrayIn.append(UpShadowArr)
-                #self.learnArrayIn.append(BodyArr)
-                #self.learnArrayIn.append(DownShadowArr)
-                print (self.learnArrayIn[c])
                 j = s.index('[',0,len(s)) #at secont out row
                 s = s[j + 1: len(s)]
                 s_out = s[0:-1]
                 self.getvalsFromLine(s_out, UpShadowArr, BodyArr, DownShadowArr)
-                self.learnArrayOut.append(UpShadowArr)
-                self.learnArrayOut.append(BodyArr)
-                self.learnArrayOut.append(DownShadowArr)
+                for k in range(sizeOut):
+                    self.learnArrayOut[c].append(UpShadowArr[k])
+                    self.learnArrayOut[c].append(BodyArr[k])
+                    self.learnArrayOut[c].append(DownShadowArr[k])
             except Exception:
                 print("wrong string format " + s)
+            #print ("line Num  " + str(c))            
             c += 1 #counter
             #if (c == count): return
         print("lines " + str(c))
@@ -134,14 +131,14 @@ class blurRules:
     def appendVals(self, tmpCandle, up, body, down):
             try: #now we have to split candle values fom string to number
                 j = tmpCandle.index(':',0,len(tmpCandle)) #TODO: проверить работоспособность и переписать все нахер по-нормальному. избавиться от говнокода
-                t = Decimal(tmpCandle[0:j]) #upshadow
+                t = float(tmpCandle[0:j]) #upshadow
                 up.append(t)
                 tmpCandle = tmpCandle[j + 1:len(tmpCandle)]
                 j = tmpCandle.index(':',0,len(tmpCandle)) #TODO: проверить работоспособность и переписать все нахер по-нормальному. избавиться от говнокода
-                t = Decimal(tmpCandle[0:j]) #body
+                t = float(tmpCandle[0:j]) #body
                 body.append(t)
                 tmpCandle = tmpCandle[j + 1:len(tmpCandle)]
-                t = Decimal(tmpCandle[0:j]) #downshadow
+                t = float(tmpCandle[0:j]) #downshadow
                 down.append(t)
             except Exception:
                 print ("exc")
