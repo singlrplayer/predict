@@ -75,7 +75,7 @@ class blurRules:
                 print("ошибка синтатксиса праввил свечей")
             i = i + 1
 
-    def createLearnArray(self, sizeIn, sizeOut, dataFile, startPos = 0, count = 100):
+    def createLearnArray(self, sizeIn, sizeOut, dataFile, startPos = 0, count = 3000):
         itertools.islice(dataFile,startPos) #on position
         c = 0
         UpShadowArr = []
@@ -107,7 +107,7 @@ class blurRules:
                 print("wrong string format " + s)
             #print ("line Num  " + str(c))            
             c += 1 #counter
-            #if (c == count): return
+            if (c == count): return
         print("lines " + str(c))
         
 

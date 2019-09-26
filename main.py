@@ -29,31 +29,24 @@ br = blurRules()
 f = myFile(br)
 f.getMeSourceCandles()
 for i in f.candles: 
-    linesCount[i] = 1000
+    linesCount[i] = 3000
     
 for i in f.candles:
     for j in range(len(br.learnArrayIn)):
         br.learnArrayIn.pop()# input ANN array cleaning
         br.learnArrayOut.pop()# output ANN array cleaning
-    br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i], linesCount[i])
+    br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i], 0, linesCount[i])
     print (br.IOcandles['out'][i])
-    #print("input arr" + str(len(br.learnArrayIn)))
-    #print("output arr" + str(len(br.learnArrayOut)))
-    #print (f.Learniles[i])
-    #print (br.IOcandles['in'][i])
-    #line = f.Learniles[i].readline()
     syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,len(br.learnArrayIn))) - 1 #in
     syn1 = 2*np.random.random((len(br.learnArrayIn),br.IOcandles['out'][i] * 3)) - 1 #out   
-    #syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,linesCount[i])) - 1 #in
-    #syn1 = 2*np.random.random((linesCount[i],br.IOcandles['out'][i] * 3)) - 1 #out
-    for learncycle in range(50):
+    for learncycle in range(500):
         if (len(br.learnArrayIn)>0):
             layer0 = np.array(br.learnArrayIn)
             layer1 = nonlin(np.dot(layer0,syn0))
             layer2 = nonlin(np.dot(layer1,syn1))
             layer2_error = np.array(br.learnArrayOut) - layer2 #common output ERR
-            #if (learncycle% 10000) == 0:
-            print ("ANN predict forex error:" + str(np.mean(np.abs(layer2_error))))
+            if (learncycle% 10) == 0:
+                print ("ANN predict forex error:" + str(np.mean(np.abs(layer2_error))))
             layer2_delta = layer2_error*nonlin(layer2,deriv=True)
             layer1_error = layer2_delta.dot(syn1.T)
             layer1_delta = layer1_error * nonlin(layer1,deriv=True)
@@ -61,43 +54,6 @@ for i in f.candles:
             syn0 += layer0.T.dot(layer1_delta)
 
             
-
-"""linesCount = {}
-myIn = []
-myOut = []
-br = blurRules()
-f = myFile(br)
-print(br.IOcandles)
-for i in f.candles: #количество обучающий строк. надо будет писать количество строк в отдельный конфиг
-    linesCount[i] = 100
-for i in f.candles: ###TODO: поразмышлять на предмет определить входящие и исходящие матрицы аки набор двумерных, дабы не влезать в дебри умножения трехмерных массивов
-    #массив входных обучающих данных
-    #myIn[i] = []
-    #myOut[i] = []
-    syn0 = {}
-    syn1 = {}
-    for k in range(linesCount[i]):
-        #myIn[i][k] = np.empty((br.IOcandles['in'][i],3))
-        #myOut[i][k] = np.empty((3, br.IOcandles['out'][i]))
-        myIn.append(np.empty((linesCount[i], br.IOcandles['in'][i],3)))
-        myOut.append(np.empty((3, br.IOcandles['out'][i], linesCount[i])))
-    # случайно инициализируем веса, в среднем - 0
-        syn0[k] = 2*np.random.random((linesCount[i], br.IOcandles['in'][i],3)) - 1
-        syn1[k] = 2*np.random.random((linesCount[i], br.IOcandles['out'][i],3)) - 1
-        for j in range(100000):
-        	# проходим вперёд по слоям 0, 1 и 2
-            layer0 = myIn
-            layer1 = nonlin(np.dot(layer0,syn0[k]))
-            layer2 = nonlin(np.dot(layer1,syn1[k]))
-        
-            layer2_error = myOut - layer2 #ouput error
-
-            layer2_delta = layer2_error*nonlin(layer2,deriv=True) #turing machine ;)
-            layer1_error = layer2_delta.dot(syn1[k].T) #turing machine - 2 ;)
-            layer1_delta = layer1_error * nonlin(layer1,deriv=True) #tm-3
-            syn1[k] += l1.T.dot(l2_delta) #подгонка весов. почти магина тьюринга ;)
-            syn0[k] += l0.T.dot(l1_delta)
-"""  
 ########################
 ## exp end ;)
 

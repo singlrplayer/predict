@@ -9,6 +9,8 @@ class myFile:
     Learniles = {} #переменные файлов с обучающими цепочками
     StatFilePath = {} #файлы статистики
     StatFiles = {} # переменные файлов статистики
+    SynFilePath ={} #пути к файлам синапсов (бинарные)
+    SynFiles = {} # файлы синапсов (бинарные)
     candles = ['minFile','min5File','min15File','min30File','hourFile','hour4File','dayFile','weekFile','monthFile'] #названия свечек. добавляется к названию файла
 
            
@@ -22,10 +24,23 @@ class myFile:
             itertools.islice(f,1)
             for line in f:
                 br.getCandleRuleFromString(line) #берет словарь размытия значений свеч (одна линия -- один тип свеч)
-            #self.getSourceCandles(currency)
         except Exception:
             print ("ошибка конфига. убедитесь, что файл %s существует (и желательно не пуст).", cfg)
             self.myShutdowm()
+        for i in self.candles:
+            path = os.getcwd()
+            os.chdir(currency + 'learning')
+            try:
+                self.SynFilePath[i] = self.fileCreate(currency + "_syn_" + i + ".txt") #сюда складывать будем синапсы
+            except Exception:
+                print ("ошибка создания файлов синапсов. убедитесь в наличии свободного места на диске, и прав на запись" + i)
+                self.myShutdowm()
+            try:
+                self.SynFiles[i] = open(self.SynFilePath[i], 'ab') #и открываем на дозапись
+            except Exception:
+                print ("ошибка создания файлов синапсов. убедитесь в наличии свободного места на диске, и прав на запись")
+                self.myShutdowm()
+            os.chdir(path)
 
     def getMeSourceCandles(self, currency = 'AUDJPY'): #opens the learn files 
         path = os.getcwd()
@@ -47,6 +62,7 @@ class myFile:
             if(i in self.Qfiles): self.Qfiles[i].close()
             if(i in self.Learniles): self.Learniles[i].close()
             if(i in self.StatFiles): self.StatFiles[i].close()
+            if(i in self.SynFiles): self.SynFiles[i].close()
         self.source['pretext'] = ''
 
     def dircreate(self, s,ind):
@@ -77,7 +93,7 @@ class myFile:
     
     def fileCreate(self, s):
         try:
-            f = open(s,'w')
+            f = open(s,'wb')
             f.close()
             return s
         except Exception:
