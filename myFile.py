@@ -9,11 +9,19 @@ class myFile:
     Learniles = {} #переменные файлов с обучающими цепочками
     StatFilePath = {} #файлы статистики
     StatFiles = {} # переменные файлов статистики
+    SynFilePath ={} #пути к файлам синапсов (бинарные)
+    SynFiles = {} # файлы синапсов (бинарные)
+    LearnLogF = ''
     candles = ['minFile','min5File','min15File','min30File','hourFile','hour4File','dayFile','weekFile','monthFile'] #названия свечек. добавляется к названию файла
 
            
-    def __init__(self, br, cfg = 'config.txt', currency = 'AUDJPY'):
+    def __init__(self, br, currency = 'EURGBP', cfg = 'config.txt'):
         self.source['candlepath'] = self.source['pretext'] = currency
+        try:
+            self.LearnLogF = open(currency + '_learn_log','w')
+        except Exception:
+            print("не удалось создать файл логов обучения")
+            self.myShutdowm()
         try:
             f = open(cfg,'r')
             z = f.readline()
@@ -21,45 +29,37 @@ class myFile:
             self.source['candlepath'] = self.source['pretext'] = str(z)
             itertools.islice(f,1)
             for line in f:
-                br.getCandleRuleFromString(line)
+                br.getCandleRuleFromString(line) #берет словарь размытия значений свеч (одна линия -- один тип свеч)
         except Exception:
             print ("ошибка конфига. убедитесь, что файл %s существует (и желательно не пуст).", cfg)
             self.myShutdowm()
+        for i in self.candles:
+            path = os.getcwd()
+            os.chdir(currency + 'learning')
+            try:
+                self.SynFilePath[i] = self.fileCreate(currency + "_syn_" + i + ".b") #сюда складывать будем синапсы
+            except Exception:
+                print ("ошибка создания файлов синапсов. убедитесь в наличии свободного места на диске, и прав на запись" + i)
+                self.myShutdowm()
+            try:
+                self.SynFiles[i] = open(self.SynFilePath[i], 'ab') #и открываем на дозапись
+            except Exception:
+                print ("ошибка создания файлов синапсов. убедитесь в наличии свободного места на диске, и прав на запись")
+                self.myShutdowm()
+            os.chdir(path)
 
-    def getSourceLearnCandles(self, currency = 'AUDJPY'): #opens the learn files 
+    def getMeSourceCandles(self, currency = 'EURGBP'): #opens the learn files 
         path = os.getcwd()
         os.chdir(currency + 'learning')
         for i in self.candles:
-            self.LearnfilePath[i] = self.source['pretext'] + currency + "_learn_" + i + ".txt" #здесь и везде: название файла строится по принцпу "валюта + "_learn_" + тип свечки + ".txt"
+            self.LearnfilePath[i] = currency + "_learn_" + i + ".txt" #здесь и везде: название файла строится по принцпу "валюта + "_learn_" + тип свечки + ".txt"
             try:
-                self.Learniles[i] = open(self.LearnfilePath[i], 'a')
+                self.Learniles[i] = open(self.LearnfilePath[i], 'r')
             except Exception:
                 print ("ошибка открытия файл " + self.LearnfilePath[i])
                 self.myShutdowm()
         os.chdir(path)
         
-
-    def makeLearnFiles(self,currency):
-        for i in self.candles:
-            self.LearnfilePath[i] = self.fileCreate(self.source['pretext'] + "_learn_" + i + ".txt")
-            try:
-                self.Learniles[i] = open(self.LearnfilePath[i], 'a')
-            except Exception:
-                print ("ошибка открытия файл " + self.LearnfilePath[i])
-                self.myShutdowm()
-        
-
-    def getSourceCandles(self, currency):
-        path = os.getcwd()
-        os.chdir(currency)
-        for i in self.candles:
-            self.QfilePath[i] = currency + "_" + i + ".txt"
-            try:
-                self.Qfiles[i] = open(self.QfilePath[i], 'r')
-            except Exception:
-                print("ошибка отрывания файла " + self.QfilePath[i])
-                os.chdir(path)
-        os.chdir(path)
 
 
     def myShutdowm(self):
@@ -67,10 +67,9 @@ class myFile:
             if(i in self.Qfiles): self.Qfiles[i].close()
             if(i in self.Learniles): self.Learniles[i].close()
             if(i in self.StatFiles): self.StatFiles[i].close()
-            #self.QfilePath[i] = ''
-            #self.LogfilePath[i] = ''
-        #   self.source['f'].close()
+            if(i in self.SynFiles): self.SynFiles[i].close()
         self.source['pretext'] = ''
+        self.LearnLogF.close()
 
     def dircreate(self, s,ind):
         path = os.getcwd()
@@ -100,7 +99,7 @@ class myFile:
     
     def fileCreate(self, s):
         try:
-            f = open(s,'w')
+            f = open(s,'wb')
             f.close()
             return s
         except Exception:

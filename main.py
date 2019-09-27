@@ -2,6 +2,8 @@ import numpy as np
 from myFile import myFile
 from blurRules import blurRules
 
+from ann import ann
+
 
 def nonlin(x,deriv=False):
     if(deriv==True):
@@ -15,56 +17,86 @@ X = np.array([[0,0,1], #вход
             [1,0,1],
             [1,1,1]])
                 
-y = np.array([[0], #выход
-			[1],
-			[1],
-			[0]])
+y = np.array([[0,0], #выход
+			[1,1],
+			[1,1],
+			[0,1]])
 
 np.random.seed(1)
 
 ## exp start
 #########################
-linesCount = {}
-myIn = []
-myOut = []
+linesCount = {} #количество обучающих строк на каждый тип свечи. надо будет писать количество строк в отдельный конфиг
 br = blurRules()
 f = myFile(br)
-for i in f.candles: #количество обучающий строк. надо будет писать количество строк в отдельный конфиг
-    linesCount[i] = 100
-for i in f.candles: ###TODO: поразмышлять на предмет определить входящие и исходящие матрицы аки набор двумерных, дабы не влезать в дебри умножения трехмерных массивов
-    #массив входных обучающих данных
-    #myIn[i] = []
-    #myOut[i] = []
-    syn0 = {}
-    syn1 = {}
-    for k in range(linesCount[i]):
-        #myIn[i][k] = np.empty((br.IOcandles['in'][i],3))
-        #myOut[i][k] = np.empty((3, br.IOcandles['out'][i]))
-        myIn.append(np.empty((linesCount[i], br.IOcandles['in'][i],3)))
-        myOut.append(np.empty((3, br.IOcandles['out'][i], linesCount[i])))
-    # случайно инициализируем веса, в среднем - 0
-        syn0[k] = 2*np.random.random((linesCount[i], br.IOcandles['in'][i],3)) - 1
-        syn1[k] = 2*np.random.random((linesCount[i], br.IOcandles['out'][i],3)) - 1
-        for j in range(100000):
-        	# проходим вперёд по слоям 0, 1 и 2
-            layer0 = myIn
-            layer1 = nonlin(np.dot(layer0,syn0[k]))
-            layer2 = nonlin(np.dot(layer1,syn1[k]))
-        
-            layer2_error = myOut - layer2 #ouput error
+f.getMeSourceCandles()
+for i in f.candles: 
+    linesCount[i] = 3000
+learnCount = {'minFile':30,'min5File':50,'min15File':70,'min30File':120,'hourFile':250,'hour4File':300,'dayFile':400,'weekFile':500,'monthFile':1000} #количество циклов обучения в пачке данных linesCount[i] для каждой свечки 
+for i in f.candles:
+    ######## вынести к херам это отсюда в одельное место 
+    startpos = 0
+    startpos = br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i], startpos, linesCount[i])
+    f.LearnLogF.write(str(i) + '\n')
+    print (i)
+    #MyAnn = ann(br.IOcandles['in'][i] * 3, len(br.learnArrayIn), br.IOcandles['out'][i] * 3, np.array(br.learnArrayIn)) #TODO: сделать шо, блядь, работало
+    syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,len(br.learnArrayIn))) - 1 #in
+    syn1 = 2*np.random.random((len(br.learnArrayIn),br.IOcandles['out'][i] * 3)) - 1 #out   
+    for learncycle in range(learnCount[i]):
+        if (len(br.learnArrayIn)>0):
+            layer0 = np.array(br.learnArrayIn)
+            layer1 = nonlin(np.dot(layer0,syn0))
+            layer2 = nonlin(np.dot(layer1,syn1))
+            layer2_error = np.array(br.learnArrayOut) - layer2 #common output ERR
+            if (learncycle% 10) == 0:
+                print ("ANN predict forex error:" + str(np.mean(np.abs(layer2_error))))
+                f.LearnLogF.write(str(np.mean(np.abs(layer2_error))) + '\n')
+                f.LearnLogF.write(str(layer2_error) + '\n')
+            layer2_delta = layer2_error*nonlin(layer2,deriv=True)
+            layer1_error = layer2_delta.dot(syn1.T)
+            layer1_delta = layer1_error * nonlin(layer1,deriv=True)
+            syn1 += layer1.T.dot(layer2_delta)
+            syn0 += layer0.T.dot(layer1_delta)
+    
+    #######
+    while (startpos != -1):
+        for j in range(len(br.learnArrayIn)):
+            br.learnArrayIn.pop()# input ANN array cleaning
+            br.learnArrayOut.pop()# output ANN array cleaning
+        startpos = br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i], startpos, linesCount[i])
+        f.LearnLogF.write(str(i) + '\n')
+        print (i)
+        #MyAnn = ann(br.IOcandles['in'][i] * 3, len(br.learnArrayIn), br.IOcandles['out'][i] * 3, np.array(br.learnArrayIn)) #TODO: сделать шо, блядь, работало
+        #syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,len(br.learnArrayIn))) - 1 #in
+        #syn1 = 2*np.random.random((len(br.learnArrayIn),br.IOcandles['out'][i] * 3)) - 1 #out   
+        for learncycle in range(learnCount[i]):
+            if (len(br.learnArrayIn)>0):
+                layer0 = np.array(br.learnArrayIn)
+                layer1 = nonlin(np.dot(layer0,syn0))
+                layer2 = nonlin(np.dot(layer1,syn1))
+                layer2_error = np.array(br.learnArrayOut) - layer2 #common output ERR
+                if (learncycle% 10) == 0:
+                    print ("ANN predict forex error:" + str(np.mean(np.abs(layer2_error))))
+                    f.LearnLogF.write(str(np.mean(np.abs(layer2_error))) + '\n')
+                    f.LearnLogF.write(str(layer2_error) + '\n')
+                layer2_delta = layer2_error*nonlin(layer2,deriv=True)
+                layer1_error = layer2_delta.dot(syn1.T)
+                layer1_delta = layer1_error * nonlin(layer1,deriv=True)
+                syn1 += layer1.T.dot(layer2_delta)
+                syn0 += layer0.T.dot(layer1_delta)
+    """upsh = layer2[0].pop()
+    bod = layer2[1].pop()
+    dsh = layer2[2].pop()
+    print("After learning ")"""
+    f.LearnLogF.write('\n') #after every candle
 
-            layer2_delta = layer2_error*nonlin(layer2,deriv=True) #turing machine ;)
-            layer1_error = layer2_delta.dot(syn1[k].T) #turing machine - 2 ;)
-            layer1_delta = layer1_error * nonlin(layer1,deriv=True) #tm-3
-            syn1[k] += l1.T.dot(l2_delta) #подгонка весов. почти магина тьюринга ;)
-            syn0[k] += l0.T.dot(l1_delta)
-  
+            
 ########################
 ## exp end ;)
 
 # случайно инициализируем веса, в среднем - 0
 syn0 = 2*np.random.random((3,4)) - 1
-syn1 = 2*np.random.random((4,1)) - 1
+syn1 = 2*np.random.random((4,2)) - 1
 
 for j in range(60000):
 
@@ -92,3 +124,4 @@ for j in range(60000):
 
     syn1 += l1.T.dot(l2_delta)
     syn0 += l0.T.dot(l1_delta)
+print ("finish ;)")
