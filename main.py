@@ -38,13 +38,20 @@ for i in f.candles:
     startpos = 0
     startpos = br.createLearnArray(br.IOcandles['in'][i], br.IOcandles['out'][i], f.Learniles[i], startpos, linesCount[i])
     f.LearnLogF.write(str(i) + '\n')
-    print (i)
+    print(i)
+    print(len(br.learnArrayIn))
+    print(len(br.learnArrayIn[0]))
+    print(br.IOcandles['in'][i] * 3)
+    print(br.IOcandles['out'][i] * 3)
+    layer0 = np.array(br.learnArrayIn)
+    print(layer0.shape)
     #MyAnn = ann(br.IOcandles['in'][i] * 3, len(br.learnArrayIn), br.IOcandles['out'][i] * 3, np.array(br.learnArrayIn)) #TODO: сделать шо, блядь, работало
     syn0 = 2*np.random.random((br.IOcandles['in'][i] * 3,len(br.learnArrayIn))) - 1 #in
     syn1 = 2*np.random.random((len(br.learnArrayIn),br.IOcandles['out'][i] * 3)) - 1 #out   
     for learncycle in range(learnCount[i]):
         if (len(br.learnArrayIn)>0):
             layer0 = np.array(br.learnArrayIn)
+            #print(layer0.shape)
             layer1 = nonlin(np.dot(layer0,syn0))
             layer2 = nonlin(np.dot(layer1,syn1))
             layer2_error = np.array(br.learnArrayOut) - layer2 #common output ERR
@@ -89,6 +96,11 @@ for i in f.candles:
     dsh = layer2[2].pop()
     print("After learning ")"""
     f.LearnLogF.write('\n') #after every candle
+    for k in range (len(br.learnArrayIn)):
+        br.learnArrayIn.pop()
+    for k in range (len(br.learnArrayOut)):
+        br.learnArrayOut.pop()
+                    
 
             
 ########################

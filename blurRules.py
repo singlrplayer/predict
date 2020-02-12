@@ -76,6 +76,7 @@ class blurRules:
             i = i + 1
 
     def createLearnArray(self, sizeIn, sizeOut, dataFile, startPos = 0, count = 3000):
+        print(sizeIn)
         itertools.islice(dataFile,startPos) #on position
         c = 0
         UpShadowArr = []
@@ -95,6 +96,7 @@ class blurRules:
                     self.learnArrayIn[c].append(UpShadowArr[k])
                     self.learnArrayIn[c].append(BodyArr[k])
                     self.learnArrayIn[c].append(DownShadowArr[k])
+                #if(sizeIn < 200):print(self.learnArrayIn[c])
                 j = s.index('[',0,len(s)) #at secont out row
                 s = s[j + 1: len(s)]
                 s_out = s[0:-1]
@@ -109,8 +111,9 @@ class blurRules:
             c += 1 #counter
             if (c == count):
                 c = c + startPos
+                print(" we got count :" + str(c))
                 return c #next start position
-        #print("lines " + str(c))
+        print("lines " + str(c))
         return -1 # we got end of file
         
 
